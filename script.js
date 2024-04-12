@@ -151,11 +151,27 @@ function makeFruitCards(fruits) {
 
 function isFruitYellow(fruit) {
     //TODO: Step 0D -- you fill in this function. 
+
+    if(fruit.color === "yellow") {
+        return true;
+    }
+    return false;
+        
     //It should return true if the fruit is yellow.
 }
 
 function filterYellowFruits() {
     //TODO: Step 0C -- you fill in this function
+    let yellowFruits = [];
+    for(const fruit of FRUITS) {
+        //if the fruit is round
+        if(isFruitYellow(fruit)) {
+            //add the fruit to the new list
+            yellowFruits.push(fruit);
+        }
+    }
+
+    makeFruitCards(yellowFruits);
 }
 
 /**
@@ -197,12 +213,17 @@ function fruitFiltering() {
     fruitRoundButton.addEventListener('click', filterRoundFruits);
 
     //Step 0A: Make a button to filter the fruits if they are yellow
+    const fruitColorButton = document.createElement('button');
+    fruitColorButton.textContent = "Filter Color Fruits";
+    fruitColorButton.addEventListener('click', filterYellowFruits);
 
     //select the container for the buttons
     const buttonsContainer = document.querySelector("#fruitButtonsContainer");
     //add the button to the container
     buttonsContainer.appendChild(fruitRoundButton);
     //Step 0B: Add the button to the container, similar to the line above
+    buttonsContainer.appendChild(fruitColorButton);
+
 
 }
 /***************************************** End Fruit Filtering: Step 0 */
@@ -216,19 +237,29 @@ function addPlayerCard(playerData){
 
     //make a new image
     let playerImage = document.createElement("img");
-    playerImage.src = '';
-    playerImage.alt = '' + " headshot";
+    playerImage.src = playerData.image;
+    playerImage.alt = playerData.name + " headshot";
     playerImage.width = 200;
 
     let playerName = document.createElement("h3");
     playerName.textContent = `Name: ${playerData.name}`;
+
     //make more paragraphs for the other player information
+
+    let playerJersey = document.createElement("p");
+    playerJersey.textContent = `Jersey: ${playerData.jerseyNumber}`;
+
+    let playerPosition = document.createElement("p");
+    playerPosition.textContent = `Position: ${playerData.position}`;
 
 
 
     //append the player information to the player 'card'
     playerCard.appendChild(playerImage);
     playerCard.appendChild(playerName);
+    playerCard.appendChild(playerJersey);
+    playerCard.appendChild(playerPosition);
+
 
     //append the player card to the player cards container
     let playerCardsContainer = document.querySelector("#playerCardsContainer");
@@ -241,6 +272,9 @@ function setPlayerCards(players){
     clearCards("#playerCardsContainer");
 
     // Step 4B: Loop through the players and add a card for each player
+    for(const player of players) {
+        addPlayerCard(player);
+    }
 
 }
 
@@ -252,11 +286,16 @@ function updateTeamInfo(teamData){
     //update the team logo
     let teamLogo = document.querySelector("#teamLogo");
     //Step 2A: Update the team logo by setting it's source
-    teamLogo.src = '';
-    teamLogo.alt = '';
+    teamLogo.src = teamData.logo;
+    teamLogo.alt = teamData.teamName + ' logo';
     teamLogo.width = 200;
 
     //Step 2B: Create a paragraph element with the team's sport and append it as a child to the team info container (id="teamInfoContainer")
+    let teamSportP = document.createElement("p")
+    teamSportP.textContent = teamData.sport;
+    let teamInfoContainer = document.querySelector("#teamInfoContainer");
+
+    teamInfoContainer.appendChild(teamSportP);
 
 }
 
@@ -295,11 +334,26 @@ function filterPlayers(filterValue, players){
     if(filterValue === "all"){
         setPlayerCards(players);
     }
-    else if(filterValue === "greaterThan15"){
+    if(filterValue === "greaterThan15"){
         filterbyGreaterThan15(players);
     }
+    if(filterValue === "defender"){
+        filterbyDefender(players);
+    }
+}
+function filterbyDefender(players){
+    let defenders = [];
+    for (const player of players){
+        if(isDefender(player)){
+            defenders.push(player);
+        }
+    }
+    setPlayerCards(defenders);
 }
 
+function isDefender(player){
+    return (player.position) === "Defender";
+}
 /***************************************** End Sports Filtering */
 
 
@@ -307,32 +361,32 @@ function runProgram() {
     console.log("Program is running");
 
     //STEP 0: filter the  -- practice
-    fruitFiltering();
+    // fruitFiltering();
 
     //STEP 1A: get the team data of the team of your choice (ASTROS or DASH)
-    // let teamData = DASH;
+    let teamData = DASH;
 
     // STEP 1B: log the team data and look at the arrays. How is the information about the team arranged?
     // console.log("Team data: ", teamData);
 
 
     // STEP 2: update the team information
-    // updateTeamInfo(teamData);
+    updateTeamInfo(teamData);
 
     //STEP 3: Finish making a card for a single player
-    // let players = teamData.players;
-    // let firstPlayer = players[0];
-    // addPlayerCard(firstPlayer);
+    let players = teamData.players;
+    let firstPlayer = players[0];
+    addPlayerCard(firstPlayer);
 
     //STEP 4: Loop through the players and add a card for each player
-    setPlayerCards(/**. Step 4A: pass in array of players */);
+    setPlayerCards(teamData.players);
 
     //STEP 5: Filter the players 
-    // let playerFilter = document.querySelector("#playersFilter");
-    // playerFilter.addEventListener("change", (event) => {
+    let playerFilter = document.querySelector("#playersFilter");
+    playerFilter.addEventListener("change", (event) => {
 
-    //     filterPlayers(event.target.value, teamData.players);
-    // });
+         filterPlayers(event.target.value, teamData.players);
+    });
 
 }
 
